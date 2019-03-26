@@ -1134,44 +1134,11 @@ a numbered step. If outdented, it (today) is rendered as a bullet in the midst o
         :   If an |authenticator| becomes available on this [=client device=],
         ::  Note:  This includes the case where an |authenticator| was available upon |lifetimeTimer| initiation.
 
-            1. If <code>|options|.{{PublicKeyCredentialCreationOptions/authenticatorSelection}}</code> is [=present=]:
-
-                  1. If <code>|options|.{{PublicKeyCredentialCreationOptions/authenticatorSelection}}.{{authenticatorAttachment}}</code> is
-                    [=present|present=] and its value is not equal to |authenticator|'s [=authenticator attachment modality=], [=iteration/continue=].
-
-                  1. If <code>|options|.{{PublicKeyCredentialCreationOptions/authenticatorSelection}}.{{residentKey}}</code>
-
-                      <dl class="switch">
-                          :   is set to {{ResidentKeyRequirement/required}}
-                          ::  If the |authenticator| is not capable of storing a [=client-side-resident public key credential
-                              source=], [=iteration/continue=].
-
-                          :   is set to {{ResidentKeyRequirement/preferred}}
-                          ::  If the |authenticator| is not capable of storing a [=client-side-resident public key credential
-                              source=], and there are other known authenticators attached that are capable of storing a
-                              [=client-side-resident public key credential source=], [=iteration/continue=].
-
-                          :   is set to {{ResidentKeyRequirement/indifferent}}
-                          ::  No effect.
-
-                          :   is set to {{ResidentKeyRequirement/forbidden}}
-                          ::  If the |authenticator| is ONLY capable of storing a [=client-side-resident public key credential
-                              source=], [=iteration/continue=].
-
-                          :   is [=not present=]
-                          ::  if <code>|options|.{{PublicKeyCredentialCreationOptions/authenticatorSelection}}.{{requireResidentKey}}</code>
-                              is set to [TRUE] and the |authenticator| is not capable of storing a [=client-side-resident public
-                              key credential source=], [=iteration/continue=].
-                      </dl>
-
-                  1. If <code>|options|.{{PublicKeyCredentialCreationOptions/authenticatorSelection}}.{{AuthenticatorSelectionCriteria/userVerification}}</code> is
-                    set to {{UserVerificationRequirement/required}} and the |authenticator| is not capable of performing [=user
-                    verification=], [=iteration/continue=].
-
             1. Let |requireResidentKey| be the <dfn>effective resident key requirement for credential creation</dfn>, a Boolean value,
                 as follows. 
 
-                If <code>|options|.{{PublicKeyCredentialCreationOptions/authenticatorSelection}}.{{residentKey}}</code>
+                If <code>|options|.{{PublicKeyCredentialCreationOptions/authenticatorSelection}}</code> is [=present=] and
+                <code>|options|.{{PublicKeyCredentialCreationOptions/authenticatorSelection}}.{{residentKey}}</code>
 
                     <dl class="switch">
 
@@ -1185,9 +1152,12 @@ a numbered step. If outdented, it (today) is rendered as a bullet in the midst o
                                 :   is capable of [=client-side-resident public key credential source=]
                                 ::  Let |requireResidentKey| be [TRUE].
 
-                                :   is not capable of [=client-side-resident public key credential source=], or if the client cannot 
-                                    determine authenticator capability,
-                                ::  Let |requireResidentKey| be [FALSE].
+                                :   is not capable of [=client-side-resident public key credential source=], or the client cannot
+                                    determine authenticator capability
+                                ::  If there are other known authenticators attached that are capable of storing a
+                                    [=client-side-resident public key credential source=], let |requireResidentKey| be [TRUE]. If
+                                    there are no other known authenticators attached that are capable of storing a
+                                    [=client-side-resident public key credential source=], let |requireResidentKey| be [FALSE].
                             </dl>
 
                         :   is set to {{ResidentKeyRequirement/required}}
@@ -1202,6 +1172,21 @@ a numbered step. If outdented, it (today) is rendered as a bullet in the midst o
                                 is [=not present=], let |requireResidentKey| be [FALSE].
 
                     </dl>
+
+                If <code>|options|.{{PublicKeyCredentialCreationOptions/authenticatorSelection}}</code> is [=not present=], let
+                |requireResidentKey| be [FALSE].
+
+            1. If <code>|options|.{{PublicKeyCredentialCreationOptions/authenticatorSelection}}</code> is [=present=]:
+
+                  1. If <code>|options|.{{PublicKeyCredentialCreationOptions/authenticatorSelection}}.{{authenticatorAttachment}}</code> is
+                    [=present|present=] and its value is not equal to |authenticator|'s [=authenticator attachment modality=], [=iteration/continue=].
+
+                  1. If |requireResidentKey| is set to [TRUE] and the |authenticator| is not capable of storing a
+                      [=client-side-resident public key credential source=], [=iteration/continue=].
+
+                  1. If <code>|options|.{{PublicKeyCredentialCreationOptions/authenticatorSelection}}.{{AuthenticatorSelectionCriteria/userVerification}}</code> is
+                    set to {{UserVerificationRequirement/required}} and the |authenticator| is not capable of performing [=user
+                    verification=], [=iteration/continue=].
 
             1. Let |userVerification| be the <dfn>effective user verification requirement for credential creation</dfn>, a Boolean value,
                 as follows. If
